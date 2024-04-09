@@ -1,0 +1,105 @@
+
+--##########################################
+--THIS SCRIPT IS MEANT PUBLIC, DONT CREDIT ME
+--##########################################
+
+badaudios={"6829105824","2221"} --2221 is for debugging
+marktime = 10 --how long people are highlighted for
+--set to "forever" to never unhighlight the player
+
+function checkaudio(inst)
+       for i, item in pairs(badaudios) do
+               if string.find(tostring(inst.SoundId),item) then
+                   task.wait()
+                   inst.SoundId="0"
+                  
+                   if inst.Parent.Parent.Parent == game:FindService("Workspace") then
+                       
+                          local h =Instance.new("Highlight")
+                   h.FillTransparency= 0.3
+                   h.FillColor = Color3.new(255,0,0)
+                   h.Name="crasher"
+                   h.Parent = inst.Parent
+                     task.spawn(function()
+                     if marktime~="forever" then
+                       wait(marktime)
+                     
+                       if h then h:Destroy() end
+                       end
+                       end)
+                   elseif inst.Parent.Parent.Parent:IsA("Model") then
+                       if not inst.Parent.Parent.Parent:FindFirstChildOfClass("Highlight") then
+                          
+                              local h =Instance.new("Highlight")
+                              h.FillColor = Color3.new(255,0,0)
+                              h.FillTransparency= 0.3
+                   h.Name="crasher"
+                   h.Parent = inst.Parent.Parent.Parent
+                     task.spawn(function()
+                     if marktime~="forever" then
+                       wait(marktime)
+                     
+                       if h then h:Destroy() end
+                       end
+                       end)
+                   else
+                       local temp = inst.Parent.Parent.Parent:FindFirstChildOfClass("Highlight") 
+                       temp.FillColor = Color3.new(255,0,0)
+                       temp.FillTransparency=0.3
+                       end
+                   elseif inst.Parent.Parent.Parent.Parent:IsA("Player")  then
+                       local pl = inst.Parent.Parent.Parent.Parent:IsA("Player")
+                       if pl.Character then
+                          local h =Instance.new("Highlight")
+                              h.FillColor = Color3.new(255,0,0)
+                              h.FillTransparency= 0.3
+                              h.Name="crasher"
+                              h.Parent = inst.Parent.Parent.Parent
+                                 task.spawn(function()
+                     if marktime~="forever" then
+                       wait(marktime)
+                     
+                       if h then h:Destroy() end
+                       end
+                       end)
+                       end
+                       end
+                   
+                 
+                   print("CRASH AUDIO!")
+                   break
+                   end
+               end
+end
+
+
+repeat task.wait() until game:FindService("Workspace") and game:FindService("Players")
+
+for i,player in pairs(game:FindService("Players"):GetPlayers()) do 
+    if player.Backpack:FindFirstChildOfClass("Tool") then
+        local tool player.Backpack:FindFirstChildOfClass("Tool")
+        if tool:FindFirstChild("Handle") then
+            if tool["Handle"]:FindFirstChildOfClass("Sound") then
+                checkaudio(tool["Handle"]:FindFirstChildOfClass("Sound"))
+                end
+            end
+        end
+    end
+
+game:FindService("Workspace").DescendantAdded:Connect(function(new)
+    if new:IsA("Sound") then
+       if new.Parent.Parent:IsA("Tool") then
+           if string.len(new.SoundId)>2 then
+           local model = new.Parent.Parent.Parent
+           
+           print("------------")
+           print("Parent: "..model.Name)
+           
+           print(new.SoundId)
+           checkaudio(new)
+           print("-------------")
+           end
+       end
+    end
+end)
+
